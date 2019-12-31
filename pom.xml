@@ -12,6 +12,7 @@
     <modules>
         <module>spring-security-one</module>
         <module>spring-security-two</module>
+        <module>spring-security-oauth2-one</module>
     </modules>
 
     <properties>
