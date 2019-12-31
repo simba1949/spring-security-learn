@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>自定义登录页面</title>
+</head>
+<body>
+<h1>自定义登录页面</h1>
+<!--/user/login 是自定义处理登录的uri-->
+<form action="/user/login" method="post">
+    <table>
+        <tr>
+            <td>用户名：</td>
+            <td><input type="text" name="username"></td>
+        </tr>
+        <tr>
+            <td>密 码：</td><td>
+            <input type="password" name="password"></td>
+        </tr>
+        <tr>
+            <td>验证码</td>
+            <td><input type="text" name="code"></td>
+            <td><img src="/img/validate/create"></td>
+        </tr>
+        <tr>
+            <td>记住我：</td>
+            <td><input type="checkbox" name="remember-me"></td>
+        </tr>
+        <tr>
+            <td><button type="submit">登录</button>
+        </tr>
+    </table>
+</form>
+
+
+<!--/user/login 是自定义处理登录的uri-->
+<form action="/user/account" method="post">
+    <table>
+        <tr>
+            <td>账号（手机号码或者Email）：</td>
+            <td><input type="text" name="account"></td>
+        </tr>
+        <tr>
+            <td>验证码</td>
+            <td><input type="text" name="code"></td>
+        </tr>
+        <tr>
+            <td><a href="/account/send-code">获取账号验证码</a></td>
+        </tr>
+        <tr>
+            <td><button type="submit">登录</button>
+        </tr>
+    </table>
+</form>
+</body>
+</html>
