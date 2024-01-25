@@ -63,6 +63,7 @@ public class MyUserDetailsService implements UserDetailsService {
 		log.info("从数据库中查询的明文密码为：{}", plaintextPassword);
 		// spring security 5.0 之后，使用方式为：DelegatingPasswordEncoder，用于选择加密器
 		// 使用 {@code PasswordEncoderFactories.createDelegatingPasswordEncoder()} 来创建密码加密器
+		// 这里要和配置的 {@code PasswordEncoder} 加密方式一致
 		PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 		String encodePassword = passwordEncoder.encode(plaintextPassword);
 		log.info("从数据库中查询的密文密码为：{}", encodePassword);
