@@ -1,5 +1,6 @@
 package vip.openpark.security.authentication.config;
 
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
@@ -10,6 +11,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import vip.openpark.security.authentication.domain.UserDO;
+import vip.openpark.security.authentication.service.UserService;
 
 /**
  * <div>
@@ -23,6 +26,8 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class MyUserDetailsService implements UserDetailsService {
+	@Resource
+	private UserService userService;
 	
 	/**
 	 * 根据用户名查询用户信息及权限，封装到 {@link UserDetails} 中
@@ -48,7 +53,13 @@ public class MyUserDetailsService implements UserDetailsService {
 		
 		// 根据用户名去数据库中查询用户信息包括密码
 		// 这里假设数据库中查询到的密码为：123456，这里使用的是明文密码，实际开发中需要加密
-		String plaintextPassword = "123456";
+		// String plaintextPassword = "123456";
+		UserDO userDO = userService.get(username);
+		// 判断用户账号是否【存在】，如果不存在直接报错
+		if (userDO == null) {
+			throw new UsernameNotFoundException("用户不存在");
+		}
+		String plaintextPassword = userDO.getPassword();
 		log.info("从数据库中查询的明文密码为：{}", plaintextPassword);
 		// spring security 5.0 之后，使用方式为：DelegatingPasswordEncoder，用于选择加密器
 		// 使用 {@code PasswordEncoderFactories.createDelegatingPasswordEncoder()} 来创建密码加密器
