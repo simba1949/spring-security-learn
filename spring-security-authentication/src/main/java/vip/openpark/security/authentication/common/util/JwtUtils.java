@@ -1,4 +1,4 @@
-package vip.openpark.security.authentication.util;
+package vip.openpark.security.authentication.common.util;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.auth0.jwt.JWT;

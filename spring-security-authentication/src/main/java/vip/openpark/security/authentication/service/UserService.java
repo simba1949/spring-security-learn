@@ -18,6 +18,21 @@ public class UserService {
 	@Resource
 	private UserDOMapper userDOMapper;
 	
+	public Long registerCount() {
+		return userDOMapper.count();
+	}
+	
+	/**
+	 * 判断用户是否存在
+	 *
+	 * @param username 用户名
+	 * @return true 表示未注册，false 表示已注册
+	 */
+	public boolean isRegister(String username) {
+		UserDO userDO = get(username);
+		return null == userDO;
+	}
+	
 	public List<UserDO> all() {
 		return userDOMapper.selectAll();
 	}

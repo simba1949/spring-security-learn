@@ -1,4 +1,4 @@
-package vip.openpark.security.authentication.config;
+package vip.openpark.security.authentication.common.config;
 
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;

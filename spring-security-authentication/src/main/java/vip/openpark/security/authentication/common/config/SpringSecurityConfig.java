@@ -1,4 +1,4 @@
-package vip.openpark.security.authentication.config;
+package vip.openpark.security.authentication.common.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,20 +21,35 @@ public class SpringSecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
-			.authorizeHttpRequests((authorize) ->
-				authorize
-					// 允许匿名用户访问，不允许已登入用户访问
-					.requestMatchers("/user/login", "/login", "/logout", "/user/logout")
-					.anonymous()
-					//不管登入,不登入 都能访问
-					.requestMatchers("/user/login", "/login", "/logout", "/user/logout")
-					.permitAll()
-					.anyRequest()
-					.permitAll()
+			// HTTP 授权处理
+			.authorizeHttpRequests(
+				(authorize) ->
+					authorize
+						// 允许匿名用户访问，不允许已登入用户访问
+						.requestMatchers("/user/registerCount", "/login")
+						.anonymous()
+						// 不管登入或者是未登入，都能访问
+						.requestMatchers("/user/isRegister", "/view/public/**")
+						.permitAll()
+						// 其他请求需要认证
+						.anyRequest()
+						.authenticated()
 			)
-			.csrf(httpSecurityCsrfConfigurer ->
-				// 哪些接口允许 CSRF，跨站请求伪造，英语：Cross-site request forgery
-				httpSecurityCsrfConfigurer.ignoringRequestMatchers("/user/login", "/login", "/logout", "/user/logout")
+			.formLogin(
+				(httpSecurityFormLoginConfigurer) ->
+					httpSecurityFormLoginConfigurer
+						.loginPage("/view/public/login.html") // 登入页面
+						.loginProcessingUrl("/login") // spring security 默认的登入处理地址
+			)
+			.logout(
+				(httpSecurityLogoutConfigurer) -> httpSecurityLogoutConfigurer.logoutSuccessUrl("/") // 退出成功后重定向到首页
+			)
+			// CSRF 处理
+			.csrf(
+				httpSecurityCsrfConfigurer ->
+					// 哪些接口允许 CSRF，跨站请求伪造，英语：Cross-site request forgery
+					httpSecurityCsrfConfigurer
+						.ignoringRequestMatchers("/user/myName", "/login")
 			);
 		return http.build();
 	}

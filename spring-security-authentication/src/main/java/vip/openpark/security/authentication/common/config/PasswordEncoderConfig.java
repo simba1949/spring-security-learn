@@ -1,4 +1,4 @@
-package vip.openpark.security.authentication.config;
+package vip.openpark.security.authentication.common.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
