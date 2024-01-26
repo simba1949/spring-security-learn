@@ -38,7 +38,7 @@ public class SpringSecurityConfig {
 			.formLogin(
 				(httpSecurityFormLoginConfigurer) ->
 					httpSecurityFormLoginConfigurer
-						.loginPage("/view/public/login.html") // 登入页面
+						.loginPage("/view/public/login.html") // 登入页面【注意：这里需要配合 spring mvc 静态资源放行】
 						.loginProcessingUrl("/login") // spring security 默认的登入处理地址
 			)
 			.logout(
