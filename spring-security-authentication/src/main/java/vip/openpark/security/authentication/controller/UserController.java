@@ -28,6 +28,7 @@ public class UserController {
 	
 	@PostMapping("login")
 	public Response login(@RequestBody UserLoginRequest request) {
+		log.info("login: {}", request);
 		// AuthenticationManager authenticate 进行用户认证
 		// 如果认证没有通过，返回错误信息
 		// 如果认证通过，使用 userId 生成 JWT，并存储在 redis 中
