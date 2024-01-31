@@ -13,6 +13,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -21,7 +22,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 import java.io.IOException;
 
@@ -107,15 +107,8 @@ public class SpringSecurityConfig {
 						.invalidateHttpSession(true) // 退出后销毁 session
 						.permitAll()
 			)
-			// CSRF 处理
-			.csrf(
-				httpSecurityCsrfConfigurer ->
-					// 哪些接口允许 CSRF，跨站请求伪造，英语：Cross-site request forgery
-					httpSecurityCsrfConfigurer
-						.ignoringRequestMatchers("/login", "/logout")
-						.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()) // cookie 保存 csrf token
-			)
-			.cors(Customizer.withDefaults()) // 允许跨域
+			.csrf(AbstractHttpConfigurer::disable) // 禁用 CSRF
+			.cors(Customizer.withDefaults()) // 允许跨域请求
 		;
 		
 		return http.build();
