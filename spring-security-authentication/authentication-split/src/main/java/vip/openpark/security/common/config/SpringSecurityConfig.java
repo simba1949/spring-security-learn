@@ -27,13 +27,26 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SpringSecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+		// 跨域配置
+		CorsConfiguration configuration = new CorsConfiguration();
+		configuration.addAllowedOrigin("http://localhost:5173"); // 允许跨域的域名
+		configuration.addAllowedMethod("*");
+		configuration.addAllowedHeader("*");
+		configuration.setAllowCredentials(true);
+		
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", configuration);
+		
 		http
-			.cors(Customizer.withDefaults())
+			.cors(
+				corsCustomizer ->
+					corsCustomizer.configurationSource(source)
+			)
 			.csrf(AbstractHttpConfigurer::disable)
 			// HTTP 授权处理
 			.authorizeHttpRequests(
-				(authorize) ->
-					authorize
+				authorizeHttpRequestsCustomizer ->
+					authorizeHttpRequestsCustomizer
 						// 允许匿名用户访问，不允许已登入用户访问
 						.requestMatchers("/login")
 						.anonymous()
@@ -47,7 +60,7 @@ public class SpringSecurityConfig {
 			)
 			// 登入处理
 			.formLogin(
-				(httpSecurityFormLoginConfigurer) ->
+				httpSecurityFormLoginConfigurer ->
 					httpSecurityFormLoginConfigurer
 						.loginProcessingUrl("/login") // spring security 默认的登入处理地址
 						// 登录成功的处理器（自定义的登录成功处理器）
@@ -58,7 +71,7 @@ public class SpringSecurityConfig {
 			)
 			// 登出处理
 			.logout(
-				(httpSecurityLogoutConfigurer) ->
+				httpSecurityLogoutConfigurer ->
 					httpSecurityLogoutConfigurer
 						.logoutUrl("/logout") // 默认的退出处理地址
 						// 退出后的处理器（自定义的退出处理器）
@@ -83,21 +96,5 @@ public class SpringSecurityConfig {
 		providerManager.setEraseCredentialsAfterAuthentication(false);
 		
 		return providerManager;
-	}
-	
-	/**
-	 * 跨域配置
-	 */
-	@Bean
-	public CorsConfigurationSource corsConfigurationSource() {
-		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.addAllowedOrigin("*");
-		configuration.addAllowedMethod("*");
-		configuration.addAllowedHeader("*");
-		
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/**", configuration);
-		
-		return source;
 	}
 }
