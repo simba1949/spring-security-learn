@@ -22,6 +22,9 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.io.IOException;
 
@@ -36,6 +39,8 @@ public class SpringSecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
+			.cors(Customizer.withDefaults())
+			.csrf(AbstractHttpConfigurer::disable)
 			// HTTP 授权处理
 			.authorizeHttpRequests(
 				(authorize) ->
@@ -44,7 +49,7 @@ public class SpringSecurityConfig {
 						.requestMatchers("/login")
 						.anonymous()
 						// 不管登入或者是未登入，都能访问
-						.requestMatchers("/view/public/index.html")
+						.requestMatchers("/user/isRegister")
 						.permitAll()
 						// 其他请求需要认证
 						.anyRequest()
@@ -66,7 +71,7 @@ public class SpringSecurityConfig {
 								log.info("Details = {}", JSON.toJSONString(authentication.getDetails()));
 								log.info("Authorities = {}", JSON.toJSONString(authentication.getAuthorities()));
 								
-								response.setContentType("text/html;charset=UTF-8");
+								response.setContentType("application/json;charset:utf-8;");
 								response.getWriter().write("登录成功");
 								response.getWriter().flush();
 							}
@@ -77,7 +82,7 @@ public class SpringSecurityConfig {
 							public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
 								log.error("exception = {}", exception.getMessage(), exception);
 								
-								response.setContentType("text/html;charset=UTF-8");
+								response.setContentType("application/json;charset:utf-8;");
 								response.getWriter().write("登录失败");
 								response.getWriter().flush();
 							}
@@ -107,8 +112,6 @@ public class SpringSecurityConfig {
 						.invalidateHttpSession(true) // 退出后销毁 session
 						.permitAll()
 			)
-			.csrf(AbstractHttpConfigurer::disable) // 禁用 CSRF
-			.cors(Customizer.withDefaults()) // 允许跨域请求
 		;
 		
 		return http.build();
@@ -125,5 +128,21 @@ public class SpringSecurityConfig {
 		providerManager.setEraseCredentialsAfterAuthentication(false);
 		
 		return providerManager;
+	}
+	
+	/**
+	 * 跨域配置
+	 */
+	@Bean
+	public CorsConfigurationSource corsConfigurationSource() {
+		CorsConfiguration configuration = new CorsConfiguration();
+		configuration.addAllowedOrigin("*");
+		configuration.addAllowedMethod("*");
+		configuration.addAllowedHeader("*");
+		
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", configuration);
+		
+		return source;
 	}
 }
