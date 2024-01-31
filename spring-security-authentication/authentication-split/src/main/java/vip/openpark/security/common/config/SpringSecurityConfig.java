@@ -1,9 +1,5 @@
 package vip.openpark.security.common.config;
 
-import com.alibaba.fastjson2.JSON;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,19 +10,12 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.io.IOException;
 
 /**
  * @author anthony
@@ -61,32 +50,10 @@ public class SpringSecurityConfig {
 				(httpSecurityFormLoginConfigurer) ->
 					httpSecurityFormLoginConfigurer
 						.loginProcessingUrl("/login") // spring security 默认的登入处理地址
-						// 登录成功的处理器
-						.successHandler(new AuthenticationSuccessHandler() {
-							@Override
-							public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-								log.info("authentication = {}", JSON.toJSONString(authentication));
-								log.info("Principal = {}", JSON.toJSONString(authentication.getPrincipal()));
-								log.info("Credentials = {}", JSON.toJSONString(authentication.getCredentials()));
-								log.info("Details = {}", JSON.toJSONString(authentication.getDetails()));
-								log.info("Authorities = {}", JSON.toJSONString(authentication.getAuthorities()));
-								
-								response.setContentType("application/json;charset:utf-8;");
-								response.getWriter().write("登录成功");
-								response.getWriter().flush();
-							}
-						})
-						// 登录失败的处理器
-						.failureHandler(new AuthenticationFailureHandler() {
-							@Override
-							public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-								log.error("exception = {}", exception.getMessage(), exception);
-								
-								response.setContentType("application/json;charset:utf-8;");
-								response.getWriter().write("登录失败");
-								response.getWriter().flush();
-							}
-						})
+						// 登录成功的处理器（自定义的登录成功处理器）
+						.successHandler(new SpringSecurityLoginSuccessHandler())
+						// 登录失败的处理器（自定义的登录失败处理器）
+						.failureHandler(new SpringSecurityLoginFailureHandler())
 						.permitAll() // 允许匿名用户访问
 			)
 			// 登出处理
@@ -94,20 +61,8 @@ public class SpringSecurityConfig {
 				(httpSecurityLogoutConfigurer) ->
 					httpSecurityLogoutConfigurer
 						.logoutUrl("/logout") // 默认的退出处理地址
-						.logoutSuccessHandler(new LogoutSuccessHandler() {
-							@Override
-							public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-								log.info("authentication = {}", JSON.toJSONString(authentication));
-								log.info("Principal = {}", JSON.toJSONString(authentication.getPrincipal()));
-								log.info("Credentials = {}", JSON.toJSONString(authentication.getCredentials()));
-								log.info("Details = {}", JSON.toJSONString(authentication.getDetails()));
-								log.info("Authorities = {}", JSON.toJSONString(authentication.getAuthorities()));
-								
-								response.setContentType("text/html;charset=UTF-8");
-								response.getWriter().write("退出成功");
-								response.getWriter().flush();
-							}
-						})
+						// 退出后的处理器（自定义的退出处理器）
+						.logoutSuccessHandler(new SpringSecurityLogoutSuccessHandler())
 						.deleteCookies("JSESSIONID") // 退出后删除 cookie
 						.invalidateHttpSession(true) // 退出后销毁 session
 						.permitAll()
