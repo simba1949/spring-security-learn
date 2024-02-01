@@ -13,6 +13,7 @@
     </parent>
 
     <modules>
+        <module>authentication-current-info</module>
         <module>authentication-together</module>
         <module>authentication-split</module>
     </modules>
