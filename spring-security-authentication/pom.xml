@@ -18,6 +18,7 @@
         <module>authentication-split</module>
         <module>authentication-graph-captcha-filter</module>
         <module>authentication-graph-captcha-provider</module>
+        <module>authenticaiton-remember-me</module>
     </modules>
 
 </project>
