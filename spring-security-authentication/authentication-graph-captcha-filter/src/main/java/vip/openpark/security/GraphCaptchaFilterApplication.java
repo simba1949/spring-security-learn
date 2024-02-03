@@ -10,8 +10,8 @@ import tk.mybatis.spring.annotation.MapperScan;
  */
 @SpringBootApplication
 @MapperScan("vip.openpark.security.mapper")
-public class AuthenticationGraphCaptchaApplication {
+public class GraphCaptchaFilterApplication {
 	public static void main(String[] args) {
-		SpringApplication.run(AuthenticationGraphCaptchaApplication.class, args);
+		SpringApplication.run(GraphCaptchaFilterApplication.class, args);
 	}
 }

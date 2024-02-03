@@ -16,7 +16,8 @@
         <module>authentication-current-info</module>
         <module>authentication-together</module>
         <module>authentication-split</module>
-        <module>authentication-graph-captcha</module>
+        <module>authentication-graph-captcha-filter</module>
+        <module>authentication-graph-captcha-provider</module>
     </modules>
 
 </project>
