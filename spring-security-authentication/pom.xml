@@ -19,6 +19,7 @@
         <module>authentication-graph-captcha-filter</module>
         <module>authentication-graph-captcha-provider</module>
         <module>authenticaiton-remember-me</module>
+        <module>authentication-session-manage</module>
     </modules>
 
 </project>
