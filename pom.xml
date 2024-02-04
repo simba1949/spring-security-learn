@@ -12,6 +12,7 @@
     <modules>
         <module>spring-security-quick-start</module>
         <module>spring-security-authentication</module>
+        <module>spring-security-authenticatioin-oauth</module>
     </modules>
 
     <properties>
