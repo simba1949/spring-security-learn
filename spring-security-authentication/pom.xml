@@ -13,13 +13,14 @@
     </parent>
 
     <modules>
+        <module>authentication-custom-load-user</module>
         <module>authentication-current-info</module>
-        <module>authentication-together</module>
-        <module>authentication-split</module>
         <module>authentication-graph-captcha-filter</module>
         <module>authentication-graph-captcha-provider</module>
         <module>authentication-remember-me</module>
         <module>authentication-session-manage</module>
+
+        <module>authentication-split</module>
     </modules>
 
 </project>
