@@ -1,16 +1,17 @@
 package vip.openpark.security.domain;
 
-import lombok.Data;
-
-import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import javax.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 表名：user
  * 表注释：用户信息表
 */
-@Data
+@Getter
+@Setter
 @Table(name = "user")
 public class UserDO implements Serializable {
     /**
