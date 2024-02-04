@@ -45,7 +45,7 @@
             <!-- 是否使用 通用Mapper 提供的注释工具，默认为 true-->
             <property name="useMapperCommentGenerator" value="true"/>
             <!-- 使用 lombok 增强 model 代码-->
-            <property name="lombok" value="Data"/>
+            <property name="lombok" value="Setter,Getter"/>
         </plugin>
         <!--生成mapper.xml时覆盖原文件-->
         <plugin type="org.mybatis.generator.plugins.UnmergeableXmlMappersPlugin" />
@@ -115,37 +115,6 @@
             <!--<property name="enableSubPackages" value="false" />-->
         </javaClientGenerator>
 
-
-        <!--表的配置-->
-        <table schema="example" tableName="permission" domainObjectName="PermissionDO">
-            <!-- 使用驼峰，默认为false-->
-            <property name="useActualColumnNames" value="false"/>
-            <generatedKey column="id" sqlStatement="mysql"/>
-            <!-- 忽略某字段 -->
-            <!--<ignoreColumn column="FRED" />-->
-            <!-- 覆盖某字段-->
-            <!--<columnOverride column="DATE_FIELD" property="startDate" />-->
-        </table>
-        <!--表的配置-->
-        <table schema="example" tableName="role" domainObjectName="PermissionDO">
-            <!-- 使用驼峰，默认为false-->
-            <property name="useActualColumnNames" value="false"/>
-            <generatedKey column="id" sqlStatement="mysql"/>
-            <!-- 忽略某字段 -->
-            <!--<ignoreColumn column="FRED" />-->
-            <!-- 覆盖某字段-->
-            <!--<columnOverride column="DATE_FIELD" property="startDate" />-->
-        </table>
-        <!--表的配置-->
-        <table schema="example" tableName="role_permission" domainObjectName="RolePermissionDO">
-            <!-- 使用驼峰，默认为false-->
-            <property name="useActualColumnNames" value="false"/>
-            <generatedKey column="id" sqlStatement="mysql"/>
-            <!-- 忽略某字段 -->
-            <!--<ignoreColumn column="FRED" />-->
-            <!-- 覆盖某字段-->
-            <!--<columnOverride column="DATE_FIELD" property="startDate" />-->
-        </table>
         <!--表的配置-->
         <table schema="example" tableName="user" domainObjectName="UserDO">
             <!-- 使用驼峰，默认为false-->
@@ -156,21 +125,6 @@
             <!-- 覆盖某字段-->
             <!--<columnOverride column="DATE_FIELD" property="startDate" />-->
         </table>
-        <!--表的配置-->
-        <table schema="example" tableName="user_role" domainObjectName="UserRoleDO">
-            <!-- 使用驼峰，默认为false-->
-            <property name="useActualColumnNames" value="false"/>
-            <generatedKey column="id" sqlStatement="mysql"/>
-            <!-- 忽略某字段 -->
-            <!--<ignoreColumn column="FRED" />-->
-            <!-- 覆盖某字段-->
-            <!--<columnOverride column="DATE_FIELD" property="startDate" />-->
-        </table>
-
-        <!--使用匹配方式，生成实体、接口、XML-->
-        <!--<table tableName="%">
-            <generatedKey column="id" sqlStatement="mysql"/>
-        </table>-->
     </context>
 
 </generatorConfiguration>

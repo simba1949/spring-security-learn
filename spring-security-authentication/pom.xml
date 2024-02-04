@@ -15,12 +15,11 @@
     <modules>
         <module>authentication-custom-load-user</module>
         <module>authentication-login-logout-page</module>
+        <module>authentication-login-logout-handler</module>
         <module>authentication-graph-captcha-filter</module>
         <module>authentication-graph-captcha-provider</module>
         <module>authentication-remember-me</module>
         <module>authentication-session-manage</module>
-
-        <module>authentication-login-logout-handler</module>
     </modules>
 
 </project>
