@@ -12,13 +12,14 @@
     <modules>
         <module>spring-security-quick-start</module>
         <module>spring-security-authentication</module>
-        <module>spring-security-authenticatioin-oauth</module>
+        <module>spring-security-authentication-oauth</module>
     </modules>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-dependencies -->
         <spring.boot.version>3.2.2</spring.boot.version>
     </properties>
 
