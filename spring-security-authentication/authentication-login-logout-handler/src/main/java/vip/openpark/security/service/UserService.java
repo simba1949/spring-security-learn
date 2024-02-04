@@ -6,8 +6,6 @@ import org.springframework.stereotype.Service;
 import vip.openpark.security.domain.UserDO;
 import vip.openpark.security.mapper.UserDOMapper;
 
-import java.util.List;
-
 /**
  * @author anthony
  * @since 2024/1/25 20:56
