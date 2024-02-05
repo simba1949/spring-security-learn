@@ -10,8 +10,8 @@ import tk.mybatis.spring.annotation.MapperScan;
  */
 @MapperScan("vip.openpark.security.mapper")
 @SpringBootApplication
-public class AuthorizationAntApplication {
+public class MethodSpelApplication {
 	public static void main(String[] args) {
-		SpringApplication.run(AuthorizationAntApplication.class, args);
+		SpringApplication.run(MethodSpelApplication.class, args);
 	}
 }

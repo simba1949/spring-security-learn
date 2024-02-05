@@ -14,6 +14,7 @@
 
     <modules>
         <module>authorization-ant</module>
+        <module>authorization-method-spel</module>
     </modules>
 
     <properties>
