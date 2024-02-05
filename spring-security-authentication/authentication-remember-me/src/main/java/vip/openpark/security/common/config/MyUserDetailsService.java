@@ -34,7 +34,7 @@ public class MyUserDetailsService implements UserDetailsService {
 	 *
 	 * <div>
 	 *     spring security 5.0（含）之前，加密器使用方式为
-	 *     1:先声明成 PasswordEncoder bean，参考自定义配置类 {@link SpringSecurityConfig#PasswordEncoder()}
+	 *     1:先声明成 PasswordEncoder bean，参考自定义配置类 {@link PasswordEncoderConfig}
 	 *     1.1:自定义配置类型使用 {@link BCryptPasswordEncoder} 作为加密器
 	 *     2:然后在注入使用
 	 * </div>
@@ -52,13 +52,12 @@ public class MyUserDetailsService implements UserDetailsService {
 		log.info("登录用户名：{}", username);
 		
 		// 根据用户名去数据库中查询用户信息包括密码
-		// 这里假设数据库中查询到的密码为：123456，这里使用的是明文密码，实际开发中需要加密
-		// String plaintextPassword = "123456";
 		UserDO userDO = userService.get(username);
 		// 判断用户账号是否【存在】，如果不存在直接报错
 		if (userDO == null) {
 			throw new UsernameNotFoundException("用户不存在");
 		}
+		
 		String plaintextPassword = userDO.getPassword();
 		log.info("从数据库中查询的明文密码为：{}", plaintextPassword);
 		// 这里理论上不应该使用 {@code PasswordEncoderFactories.createDelegatingPasswordEncoder()}
