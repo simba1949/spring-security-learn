@@ -14,6 +14,7 @@ import lombok.Setter;
 @Setter
 @Table(name = "user")
 public class UserDO implements Serializable {
+    
     /**
      * 主键
      */

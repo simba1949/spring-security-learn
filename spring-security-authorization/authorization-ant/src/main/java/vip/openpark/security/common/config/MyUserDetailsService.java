@@ -12,6 +12,7 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import vip.openpark.security.domain.UserDO;
+import vip.openpark.security.service.PermissionService;
 import vip.openpark.security.service.RoleService;
 import vip.openpark.security.service.UserService;
 
@@ -33,6 +34,8 @@ public class MyUserDetailsService implements UserDetailsService {
 	private UserService userService;
 	@Resource
 	private RoleService roleService;
+	@Resource
+	private PermissionService permissionService;
 	
 	/**
 	 * 根据用户名查询用户信息及权限，封装到 {@link UserDetails} 中
@@ -63,31 +66,9 @@ public class MyUserDetailsService implements UserDetailsService {
 			throw new UsernameNotFoundException("用户不存在");
 		}
 		
-		String plaintextPassword = userDO.getPassword();
-		log.info("从数据库中查询的明文密码为：{}", plaintextPassword);
-		// 这里理论上不应该使用 {@code PasswordEncoderFactories.createDelegatingPasswordEncoder()}
-		// 应该使用的是数据库中的密码，数据库中的密码是加密后的密码
-		// 这里要和配置的 {@code PasswordEncoder} 加密方式一致
-		PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-		String encodePassword = passwordEncoder.encode(plaintextPassword);
-		log.info("从数据库中查询的密文密码为：{}", encodePassword);
-		
-		// 根据用户名去数据查询用户的信息
-		// 判断用户账号是否【启用】，true 表示启用，false 表示禁用
-		boolean enabledFlag = true;
-		// 判断用户账号是否【没有过期】，true 表示不过期，false 表示过期
-		boolean accountNonExpiredFlag = true;
-		// 判断用户账号密码是否【没有过期】，true 表示未过期，false 表示过期
-		boolean credentialsNonExpiredFlag = true;
-		// 判断用户账号是否【没有冻结】，true 表示没有冻结，false 表示已冻结
-		boolean accountNonLockedFlag = true;
-		
 		List<String> roles = roleService.selectByUserId(userDO.getId());
+		List<String> permissions = permissionService.selectByRoles(roles);
 		
-		// 第一个参数表示用户名，第二个参数表示加密后的密码，最后一个参数表示该用户拥有哪些角色（角色对应权限）
-		return new User(
-			username, encodePassword,
-			enabledFlag, accountNonExpiredFlag, credentialsNonExpiredFlag, accountNonLockedFlag,
-			AuthorityUtils.createAuthorityList(roles));
+		return new CustomGrantedAuthority(userDO, roles, permissions);
 	}
 }

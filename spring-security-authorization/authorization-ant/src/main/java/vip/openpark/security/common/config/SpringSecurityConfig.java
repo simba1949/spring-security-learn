@@ -27,9 +27,12 @@ public class SpringSecurityConfig {
 			.authorizeHttpRequests(
 				authorizeHttpRequestsCustomizer ->
 					authorizeHttpRequestsCustomizer
-						.requestMatchers("/admin/**").hasRole("admin")
-						.requestMatchers("/manager/**").hasRole("manager")
-						.requestMatchers("/user/**").hasRole("user")
+						.requestMatchers("/adminRole/**").hasRole("admin")
+						.requestMatchers("/adminPermission/**").hasAuthority("/adminPermission")
+						.requestMatchers("/managerRole/**").hasRole("manager")
+						.requestMatchers("/managerPermission/**").hasAuthority("/managerPermission")
+						.requestMatchers("/userRole/**").hasRole("user")
+						.requestMatchers("/userPermission/**").hasAuthority("/userPermission")
 						// 所有请求都通过认证（除了spring security 内置的登录页面和登录接口）
 						.anyRequest()
 						.authenticated()
