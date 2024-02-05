@@ -57,6 +57,12 @@ public class SpringSecurityConfig {
 						.logoutUrl("/logout")
 						// 登出成功后，跳转到登录页面
 						.logoutSuccessUrl("/public/logout.html")
+						// 删除 cookie
+						.deleteCookies("JSESSIONID")
+						// 清除 session
+						.invalidateHttpSession(true)
+						// 清除认证信息
+						.clearAuthentication(true)
 			)
 			// 禁用 CSRF 防护，这里先禁用，后续再开启
 			.csrf(AbstractHttpConfigurer::disable);
