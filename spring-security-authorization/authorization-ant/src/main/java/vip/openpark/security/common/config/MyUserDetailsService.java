@@ -2,14 +2,11 @@ package vip.openpark.security.common.config;
 
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import vip.openpark.security.domain.UserDO;
 import vip.openpark.security.service.PermissionService;
@@ -69,6 +66,6 @@ public class MyUserDetailsService implements UserDetailsService {
 		List<String> roles = roleService.selectByUserId(userDO.getId());
 		List<String> permissions = permissionService.selectByRoles(roles);
 		
-		return new CustomGrantedAuthority(userDO, roles, permissions);
+		return new CustomUserDetails(userDO, roles, permissions);
 	}
 }

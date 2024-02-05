@@ -17,13 +17,13 @@ import java.util.Set;
  * @since 2024/2/5 20:53
  */
 @Getter
-public class CustomGrantedAuthority implements UserDetails {
+public class CustomUserDetails implements UserDetails {
 	private static final long serialVersionUID = 1793192130366892978L;
 	
 	private final UserDO userDO;
 	private final Set<GrantedAuthority> authorities;
 	
-	public CustomGrantedAuthority(UserDO userDO, Collection<String> roles, Collection<String> permissions) {
+	public CustomUserDetails(UserDO userDO, Collection<String> roles, Collection<String> permissions) {
 		this.userDO = userDO;
 		this.authorities = new HashSet<>();
 		
