@@ -13,6 +13,7 @@
         <module>spring-security-quick-start</module>
         <module>spring-security-authentication</module>
         <module>spring-security-authentication-oauth</module>
+        <module>spring-security-integration-spring-session</module>
     </modules>
 
     <properties>

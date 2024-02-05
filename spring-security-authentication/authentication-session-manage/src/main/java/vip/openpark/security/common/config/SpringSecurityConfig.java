@@ -1,64 +1,89 @@
 package vip.openpark.security.common.config;
 
+import com.alibaba.fastjson2.JSON;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.SessionManagementConfigurer;
+import org.springframework.security.core.session.SessionInformation;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 /**
+ * <div>
+ *     注解 {@link EnableWebSecurity} 标识是启用 Spring Security
+ *     注解 {@link Configuration} 给 spring 容器标识该类是配置类
+ * </div>
+ *
  * @author anthony
  * @since 2024/1/25 23:34
  */
+@Slf4j
 @Configuration
 @EnableWebSecurity
 public class SpringSecurityConfig {
 	@Resource
-	UserDetailsService userDetailsService;
+	private UserDetailsService userDetailsService;
 	@Resource
-	PersistentTokenRepository persistentTokenRepository;
+	private PersistentTokenRepository persistentTokenRepository;
 	
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
+			// 自定义验证码过滤器
+			.addFilterBefore(new GraphCaptchaFilter(), UsernamePasswordAuthenticationFilter.class)
 			// HTTP 授权处理
 			.authorizeHttpRequests(
 				authorizeHttpRequestsCustomizer ->
 					authorizeHttpRequestsCustomizer
-						// 允许匿名用户访问，不允许已登录的用户访问
-						.requestMatchers("/public/login.html", "/graphCaptcha/generate", "/login")
+						// 只允许匿名用户访问的地址
+						.requestMatchers(
+							"/public/login.html", "/graphCaptcha/generate", "/login",
+							"/public/loginFailure.html", "/public/logout.html",
+							"/public/expiredUrl.html")
 						.anonymous()
-						// 不管登入或者是未登入，都能访问
-						.requestMatchers("/user/isRegister", "/public/*.html")
+						// 匿名和登录用户都可以访问的地址
+						.requestMatchers("/public/index.html")
 						.permitAll()
-						// 其他请求需要认证
+						// 除上述外，所有请求都通过认证（除了spring security 内置的登录页面和登录接口）
 						.anyRequest()
 						.authenticated()
-			
 			)
+			// 登录处理
 			.formLogin(
-				httpSecurityFormLoginConfigurer ->
-					httpSecurityFormLoginConfigurer
+				formLoginCustomizer ->
+					formLoginCustomizer
 						// 登录页面
 						.loginPage("/public/login.html")
-						// 登录处理地址
+						// 登录接口
 						.loginProcessingUrl("/login")
 						// 登录成功后跳转的地址，true则表示总是指定页面，false表示调整用户登录之前的页面
 						.defaultSuccessUrl("/public/index.html", true)
-				// 这里不要加 .permitAll()
-				// 如果添加 permitAll() ，则会跳转到登录页面，而不是跳转到登录成功页面，这里登录页面允许匿名用户访问
-				// .permitAll()
+						// 登录失败后，跳转到登录失败页面
+						.failureUrl("/public/loginFailure.html")
 			)
+			// 登出处理
+			.logout(
+				logoutCustomizer ->
+					logoutCustomizer
+						// 登出接口
+						.logoutUrl("/logout")
+						// 登出成功后，跳转到登录页面
+						.logoutSuccessUrl("/public/logout.html")
+						// 删除 cookie
+						.deleteCookies("JSESSIONID")
+						// 清除 session
+						.invalidateHttpSession(true)
+						// 清除认证信息
+						.clearAuthentication(true)
+			)
+			// 记住我
 			.rememberMe(
 				rememberMeCustomizer ->
 					rememberMeCustomizer
@@ -72,16 +97,7 @@ public class SpringSecurityConfig {
 						.tokenValiditySeconds(2 * 60)
 						.tokenRepository(persistentTokenRepository)
 			)
-			// 登出处理
-			.logout(
-				(httpSecurityLogoutConfigurer) ->
-					httpSecurityLogoutConfigurer
-						.logoutUrl("/logout") // 默认的退出处理地址
-						.logoutSuccessUrl("/public/logout.html") // 退出成功后重定向页面
-						.deleteCookies("JSESSIONID") // 退出后删除 cookie
-						.invalidateHttpSession(true) // 退出后销毁 session
-						.permitAll()
-			)
+			// 会话管理
 			.sessionManagement(
 				sessionManagementCustomizer ->
 					sessionManagementCustomizer
@@ -90,45 +106,27 @@ public class SpringSecurityConfig {
 						)
 						// 会话并发控制
 						.sessionConcurrency(
-							sessionConcurrency ->
-								sessionConcurrency
-									.maximumSessions(1) // 1个用户只能同时登录一个
-									.maxSessionsPreventsLogin(false) // 如果设置为true，已经登录企鹅在线的不允许下一个登录，如果false，允许登录，前一个下线
-									.expiredUrl("/public/expiredUrl.html") // 会话失效后跳转的页面（注意：需要在 spring security 认证中释放页面权限）
+							sessionConcurrencyCustomizer ->
+								sessionConcurrencyCustomizer
+									// 最大会话数
+									.maximumSessions(1)
+									// 达到最大会话数，true禁止登录，false表示可以登录但是会剔除一个
+									.maxSessionsPreventsLogin(false)
+									// 如果用户尝试访问资源并且由于当前用户的会话过多而导致其会话已过期，则要重定向到的URL。（注意：需要在 spring security 认证中释放页面权限）
+									.expiredUrl("/public/expiredUrl.html")
+									// 会话过期处理在，不会主动触发，访问的时候会触发，这里演示打印日志（会覆盖上面 expiredUrl）
+									.expiredSessionStrategy(event -> {
+										SessionInformation sessionInformation = event.getSessionInformation();
+										if (sessionInformation.isExpired()) {
+											// session 过期
+											log.info("session expired: {}", JSON.toJSONString(sessionInformation));
+										}
+									})
 						)
-			
 			)
-			// CSRF 处理
-			.csrf(
-				httpSecurityCsrfConfigurer ->
-					// 哪些接口允许 CSRF，跨站请求伪造，英语：Cross-site request forgery
-					httpSecurityCsrfConfigurer
-						.ignoringRequestMatchers("/login", "/logout")
-						.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()) // cookie 保存 csrf token
-			);
+			// 禁用 CSRF 防护，这里先禁用，后续再开启
+			.csrf(AbstractHttpConfigurer::disable);
 		
 		return http.build();
-	}
-	
-	@Bean
-	public AuthenticationManager authenticationManager(UserDetailsService userDetailsService,
-	                                                   PasswordEncoder passwordEncoder) {
-		DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-		authenticationProvider.setUserDetailsService(userDetailsService);
-		authenticationProvider.setPasswordEncoder(passwordEncoder);
-		
-		ProviderManager providerManager = new ProviderManager(authenticationProvider);
-		providerManager.setEraseCredentialsAfterAuthentication(false);
-		
-		return providerManager;
-	}
-	
-	@Bean
-	public PasswordEncoder PasswordEncoder() {
-		// spring security 5.0 （含）之前版本，使用方式：new BCryptPasswordEncoder();
-		// return new BCryptPasswordEncoder();
-		// spring security 5.0 以上版本，使用方式：PasswordEncoderFactories.createDelegatingPasswordEncoder()
-		// spring security 5.0 以上版本，可以不用配置，默认这种方式
-		return PasswordEncoderFactories.createDelegatingPasswordEncoder();
 	}
 }
