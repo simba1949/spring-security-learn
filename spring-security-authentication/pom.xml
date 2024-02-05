@@ -20,7 +20,7 @@
         <module>authentication-graph-captcha-provider</module>
         <module>authentication-remember-me</module>
         <module>authentication-session-manage</module>
-        <module>authentication-mylogin</module>
+        <module>authentication-custom-login</module>
     </modules>
 
 </project>
