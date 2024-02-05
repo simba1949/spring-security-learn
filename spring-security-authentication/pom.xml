@@ -21,6 +21,7 @@
         <module>authentication-remember-me</module>
         <module>authentication-session-manage</module>
         <module>authentication-custom-login-basic-session</module>
+        <module>authentication-custom-login-basic-no-session</module>
     </modules>
 
 </project>
