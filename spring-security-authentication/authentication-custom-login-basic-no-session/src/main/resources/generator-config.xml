@@ -63,7 +63,7 @@
         <!--数据库连接信息-->
         <jdbcConnection
                 driverClass="com.mysql.cj.jdbc.Driver"
-                connectionURL="jdbc:mysql://192.168.8.9:3306/example"
+                connectionURL="jdbc:mysql://172.17.35.120:3306/example"
                 userId="root"
                 password="123456">
             <!---->
@@ -116,7 +116,43 @@
         </javaClientGenerator>
 
         <!--表的配置-->
+        <table schema="example" tableName="permission" domainObjectName="PermissionDO">
+            <!-- 使用驼峰，默认为false-->
+            <property name="useActualColumnNames" value="false"/>
+            <generatedKey column="id" sqlStatement="mysql"/>
+            <!-- 忽略某字段 -->
+            <!--<ignoreColumn column="FRED" />-->
+            <!-- 覆盖某字段-->
+            <!--<columnOverride column="DATE_FIELD" property="startDate" />-->
+        </table>
+        <table schema="example" tableName="role" domainObjectName="RoleDO">
+            <!-- 使用驼峰，默认为false-->
+            <property name="useActualColumnNames" value="false"/>
+            <generatedKey column="id" sqlStatement="mysql"/>
+            <!-- 忽略某字段 -->
+            <!--<ignoreColumn column="FRED" />-->
+            <!-- 覆盖某字段-->
+            <!--<columnOverride column="DATE_FIELD" property="startDate" />-->
+        </table>
+        <table schema="example" tableName="role_permission" domainObjectName="RolePermissionDO">
+            <!-- 使用驼峰，默认为false-->
+            <property name="useActualColumnNames" value="false"/>
+            <generatedKey column="id" sqlStatement="mysql"/>
+            <!-- 忽略某字段 -->
+            <!--<ignoreColumn column="FRED" />-->
+            <!-- 覆盖某字段-->
+            <!--<columnOverride column="DATE_FIELD" property="startDate" />-->
+        </table>
         <table schema="example" tableName="user" domainObjectName="UserDO">
+            <!-- 使用驼峰，默认为false-->
+            <property name="useActualColumnNames" value="false"/>
+            <generatedKey column="id" sqlStatement="mysql"/>
+            <!-- 忽略某字段 -->
+            <!--<ignoreColumn column="FRED" />-->
+            <!-- 覆盖某字段-->
+            <!--<columnOverride column="DATE_FIELD" property="startDate" />-->
+        </table>
+        <table schema="example" tableName="user_role" domainObjectName="UserRoleDO">
             <!-- 使用驼峰，默认为false-->
             <property name="useActualColumnNames" value="false"/>
             <generatedKey column="id" sqlStatement="mysql"/>
