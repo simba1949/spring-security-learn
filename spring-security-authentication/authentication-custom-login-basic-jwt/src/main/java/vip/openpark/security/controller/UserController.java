@@ -1,12 +1,15 @@
 package vip.openpark.security.controller;
 
+import cn.hutool.core.util.StrUtil;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import vip.openpark.security.common.config.CustomUserDetails;
 import vip.openpark.security.common.request.LoginRequest;
@@ -50,5 +53,21 @@ public class UserController {
 		bucket.set(userInfo, 10L, TimeUnit.MINUTES);
 		
 		return Response.success(jwt);
+	}
+	
+	/**
+	 * 登出
+	 *
+	 * @param request 请求
+	 * @return 响应
+	 */
+	@GetMapping("/logout")
+	public Response<Void> logout(HttpServletRequest request) {
+		String authorization = request.getHeader("Authorization");
+		if (StrUtil.isNotBlank(authorization)) {
+			redissonClient.getBucket(authorization).delete();
+		}
+		
+		return Response.success();
 	}
 }
